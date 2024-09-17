@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>Time Use Survey</title>
+    <script src="../dist/jspsych.js"></script>
+    <script src="../dist/plugin-survey-html-form.js"></script>
+    <script src="../dist/plugin-survey-text.js"></script>
+
+    <link rel="stylesheet" href="../dist/jspsych.css" />
+    <style>
+      .instruction {
+        max-width: 40rem;
+        text-align: justify;
+      }
+
+      h2 {
+        font-size: 1.5em;
+        font-weight: bold;
+        background-color: #c0e9ff;
+        margin: 1em 0;
+      }
+  
+      body {
+        overflow-y: scroll; /* スクロールを有効にする */
+      }
+
+      .option-primary {
+        background-color: #EF9C66;  /* 1次活動の背景色 */
+      }
+      .option-secondary {
+        background-color: #FCDC94;  /* 2次活動の背景色 */
+      }
+
+      .option-tertiary {
+        background-color: #C8CFA0;  /* 3次活動の背景色 */
+      }
+
+      .option-even {
+        background-color: #ffffff;  /* 偶数の背景色 */
+      }
+      .option-odd {
+        background-color: #d2d2d2;  /* 奇数の背景色 */
+      }
+
+    </style>
+  </head>
+  <body></body>
+  <script>
+
+    var jsPsych = initJsPsych({
+      on_finish: function() {
+        // データをCSV形式に変換
+        var csvData = jsPsych.data.get().csv();
+        // CSVデータをファイルとしてダウンロード
+        var blob = new Blob([csvData], { type: 'text/csv' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'data.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      },
+    });
+
+    // Page 1:被験者IDの入力 
+      var survey_id = {
+        type: jsPsychSurveyHtmlForm,
+            html: `
+            <div class="instruction">
+            <h2>識別用コードを入力してください。</h2>
+                あなたに割り当てられたID：<input name="participant_id" type="text" pattern="^[0-9]+$" style="width: 120px;" required>
+                <br>※半角数字で入力してください。
+                <br><br>
+            </div>
+            `,
+        required: true,
+        button_label: '次へすすむ',
+        on_finish: function(data) {
+          // 参加者IDをjsPsychのデータストアに保存
+          jsPsych.data.addProperties({participant_id: data.response.participant_id});
+        }
+      };
+
+
+    // 日にちの選択
+    var survey_day = {
+      type: jsPsychSurveyHtmlForm,
+          html: `
+          <div class="instruction">
+          <h1>回答する日のことについてお伺いします。</h1>
+          <h2>日付を選択してください。</h2>
+            回答する日付：<input type="date" id="survey_day" name="date" min="2024-09-01" required value="${new Date().toISOString().split('T')[0]}"/>
+          <br>
+
+          <h2>その日の天気について選択してください。</h2>
+            天気：
+            <select name="weather" id="weather" required>
+              <option value="" disabled selected>選択してください</option>
+              <option value="without_rain">降雨なし（晴れあるいはくもり）</option>
+              <option value="sometime_rain">一時雨</option>
+              <option value="allday_rain">一日中雨</option>
+            </select>
+            <br>
+
+            <h2>その日の主要な予定や出来事について当てはまるものをすべて選択してください。</h2>
+              <input type="checkbox" id="travel" name="events" />
+                <label for="travel">旅行・行楽</label>
+              <br>
+              <input type="checkbox" id="ceremony" name="events" />
+                <label for="ceremony">行事または冠婚葬祭（半日以上の参加）</label>
+              <br>
+              <input type="checkbox" id="business_trip" name="events" />
+                <label for="business_trip">出張・研修など</label>
+              <br>
+              <input type="checkbox" id="telework" name="events" />
+                <label for="telework">テレワーク</label>
+              <br>
+              <input type="checkbox" id="medical_leave" name="events" />
+                <label for="medical_leave">療養</label>
+              <br>
+              <input type="checkbox" id="day_off" name="events" />
+                <label for="day_off">休みの日（休暇・休日など）</label>
+              <br>
+              <input type="checkbox" id="childcare_leave" name="events" />
+                <label for="childcare_leave">育児休業・育児休暇</label>
+              <br>
+              <input type="checkbox" id="caregiver_leave" name="events" />
+                <label for="caregiver_leave">介護休業・介護休暇</label>
+            <br><br>
+          </div>
+          `,
+      required: true,
+      button_label: '次へすすむ'
+    };
+
+
+    // 活動の選択肢リスト
+    const behaviors = [
+      { value: "01", text: "睡眠" },
+      { value: "02", text: "身の回りの用事" },
+      { value: "03", text: "食事" },
+      { value: "04", text: "通勤・通学" },
+      { value: "05", text: "仕事" },
+      { value: "06", text: "学業" },
+      { value: "07", text: "家事" },
+      { value: "08", text: "介護・看護" },
+      { value: "09", text: "育児" },
+      { value: "10", text: "買い物" },
+      { value: "11", text: "移動（通勤・通学を除く）" },
+      { value: "12", text: "テレビ・ラジオ・新聞・雑誌" },
+      { value: "13", text: "休養・くつろぎ" },
+      { value: "14", text: "学習・自己啓発・訓練（学業以外）" },
+      { value: "15", text: "趣味・娯楽" },
+      { value: "16", text: "スポーツ" },
+      { value: "17", text: "ボランティア活動・社会参加活動" },
+      { value: "18", text: "交際・つきあい" },
+      { value: "19", text: "受診・療養" },
+      { value: "20", text: "その他" }
+    ];
+
+    // 動的に活動の選択肢を生成
+    function option_behaviors() {
+      let optionsHTML = `<option value="" disabled selected>選択してください</option>`;
+      behaviors.forEach(function(activity) {
+        let className = "";  // デフォルトで空のクラス名
+        // クラスを条件に基づいて割り当てる
+        if (activity.value === "01" || activity.value === "02" || activity.value === "03") {
+          className = "option-primary";
+        } else if (["04", "05", "06", "07", "08", "09", "10"].includes(activity.value)) {
+          className = "option-secondary";
+        } else {
+          className = "option-tertiary";
+        }
+        // 条件に応じたクラスを含むオプションを1回だけ追加
+        optionsHTML += `<option class="${className}" value="${activity.value}">${activity.text}</option>`;
+      });
+      return optionsHTML;
+    }
+
+    // 時間のリスト（15分間隔）
+    const time_slots = Array.from({ length: 96 }, (_, i) => {
+      const hours = Math.floor(i / 4);
+      const minutes = (i % 4) * 15;
+      return {
+        value: i + 1,
+        text: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+      };
+    }).concat({ value: 97, text: "24:00" });
+
+    // 動的に終了時刻の選択肢を生成
+    function option_time(from_index) {
+      let optionsHTML = `<option value="" disabled selected>選択してください</option>`;
+      time_slots.slice(from_index + 1).forEach(function(slot, index) {
+        const className = index % 2 === 0 ? 'option-even' : 'option-odd';  // 偶数と奇数でクラスを分ける
+        optionsHTML += `<option class="${className}" value="${slot.value}">${slot.text}</option>`;
+      });
+      return optionsHTML;
+    }
+
+    // 誰と一緒にいたかの選択肢リスト
+    const people = [
+      { value: "lonely", text: "1人で" },
+      { value: "family", text: "家族" },
+      { value: "colleague", text: "学校・職場の人" },
+      { value: "other", text: "その他の人" }
+    ];
+
+    function option_people() {
+      let optionsHTML = `<option value="" disabled selected>選択してください</option>`;
+      people.forEach(function(activity) {
+        optionsHTML += `<option value="${activity.value}">${activity.text}</option>`;
+      });
+      return optionsHTML;
+    }
+
+    
+    var currentTrialIndex = 0;  // Track current trial index globally
+
+    // 96個の質問を生成
+    var survey_trial = {
+      type: jsPsychSurveyHtmlForm,
+      html: function() {
+        return `
+        <form>
+          <div class="instruction">
+            <h1>生活時間調査</h1>
+            <h2><u>${time_slots[currentTrialIndex].text}</u>の状況をお聞きします。</h2>
+            <h3>1. 何をしていましたか？</h3>              
+              <label for="bhvr">その時にしていた活動を選択してください:</label>
+              <select name="bhvr" id="bhvr" required>
+                ${option_behaviors()}
+              </select>
+              <br>
+              【参考】<br>
+              <ul>
+              <li><span class="option-primary">1次活動</span>：生活になくてはならない活動（睡眠、身の回りの用事、食事）<br></li>
+              <li><span class="option-secondary">2次活動</span>：社会生活を営むうえで義務的な活動（仕事や学業など）<br></li>
+              <li><span class="option-tertiary">3次活動</span>：自由な活動（余暇や楽しみなど）</li>
+              </ul><br>
+            <h3>2. その活動や行動はいつまで続けましたか？</h3>
+              <label for="time">終了時刻:</label>
+              <select name="time" id="time" required>
+                ${option_time(currentTrialIndex)}
+              </select>
+            <br><br>
+            <h3>3. その時間帯に誰かと一緒にいましたか？</h3>
+              <label for="people">誰と:</label>
+              <select name="people" id="people" required>
+                ${option_people()}
+              </select>
+          <div>
+          <br>
+        </form>
+        `;
+      },
+      button_label: "次へすすむ",
+      on_finish: function(data) {
+        console.log(data.response);  // デバッグ用に追加
+        // Get the selected end time
+        var selectedTime = parseInt(data.response.time, 10);
+        if (selectedTime < 97) {
+          currentTrialIndex = selectedTime - 1;  // Update to the next trial index
+        } else {
+          currentTrialIndex = 97;  // 24:00が選ばれたらループを終了
+          }
+      }
+    };
+
+    
+
+    // Loop the survey until 24:00 is selected
+    var loop_node = {
+      timeline: [survey_trial],
+      loop_function: function() {
+        return currentTrialIndex != 97;  // Continue looping until 24:00 is selected
+      }
+    };
+
+    
+    var timeline = [];
+    // Add the survey to the timeline
+    timeline.push(survey_id);
+    timeline.push(survey_day);
+    timeline.push(loop_node);
+
+    // Run the experiment
+    jsPsych.run(timeline);
+
+  </script>
+</html>

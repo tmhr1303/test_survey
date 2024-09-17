@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>My experiment</title>
+    <script src="../dist/jspsych.js"></script>
+    <!-- survey plugins -->
+    <script src="../dist/plugin-survey-multi-choice.js"></script>
+    <script src="../dist/plugin-survey-likert.js"></script>
+    <script src="../dist/plugin-survey-html-form.js"></script>
+    <script src="../dist/plugin-survey-text.js"></script>
+
+    <!-- misc plugins -->
+    <script src="../dist/plugin-html-keyboard-response.js"></script> 
+    
+    <link rel="stylesheet" href="../dist/jspsych.css" />
+
+    <style>
+      .instruction {
+        max-width: 40rem; 
+        text-align: justify;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      font-weight: bold;
+      background-color: #c0e9ff;
+      margin: 1em 0;
+    }
+
+    body {
+      overflow-y: scroll; /* スクロールを有効にする */
+    }
+    </style>
+
+  </head>
+  <body></body>
+    <script>
+
+      var jsPsych = initJsPsych({
+        on_finish: function() {
+          var data = jsPsych.data.get().csv();
+          var encodedUri = encodeURI("data:text/csv;charset=utf-8," + data);
+          var link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", "survey_results.csv");
+          document.body.appendChild(link);
+          link.click();
+        }
+      });
+
+      // Page 1:被験者IDの入力 
+      var survey_id = {
+        type: jsPsychSurveyHtmlForm,
+        html: `
+        <div class="instruction">
+        <h2>識別用コードを入力してください。</h2>
+            あなたに割り当てられたID：<input name="participant_id" type="text" pattern="^[0-9]+$" style="width: 120px;" required>
+            <br>※半角数字で入力してください。
+        </div>
+        `,
+        required: true,
+        button_label: '次へすすむ',
+        on_finish: function(data) {
+          // 参加者IDをjsPsychのデータストアに保存
+          jsPsych.data.addProperties({participant_id: data.response.participant_id});
+        }
+      };
+
+// ras //
+         const ras = {
+            type: jsPsychSurveyLikert,
+            preamble: `
+              <div class="instruction">
+                <h1>Recovery Assessment Scale（RAS）</h1>
+                <h2>次の文章は、自分自身や自分の人生について、どのように感じていらっしゃるかを表したものです。</h2>
+                    それぞれの文章を読み、もっともあてはまると思うものを選択してください。</p>
+              </div>
+            `,
+            questions: [
+            '生きがいがある',
+            '不安があっても、自分のしたい生き方ができる',
+            '自分の人生で起きることは、自分で何とかできる',
+            '自分のことが好きだ',
+            '人々が自分のことをよく知ったら、好ましく思ってくれるだろう',
+            '自分がどんな人間になりたいかという考えがある',
+            '自分の将来に希望を持っている',
+            'いつも好奇心がある',
+            'ストレスに対処することができる',
+            '成功したいという強い願望がある',
+            '元気でいたり、元気になったりするための、自分なりの計画がある',
+            '到達したい人生の目標がある',
+            '現在の自分の目標を達成できると信じている',
+            '手助けを求めた方がよいのがどのような時か、知っている',
+            '手助けを求めてもかまわないと思う',
+            '必要な時には、手助けを求める',
+            'たとえ自分で自分のことを気にかけていなくても、他の人は私を気にかけてくれる',
+            '何か良いことが、いつかは起きるだろう',
+            '頼りにできる人がいる',
+            'たとえ自分のことを信じていない時でも、他の人が信じてくれる',
+            'さまざまな友達を持つことは、大切なことだ',
+            '精神の病気に対処することは、いまでは私の暮らしで最重要なことではない',
+            '症状が私の生活の妨（さまた）げとなることは、だんだん少なくなっている',
+            '私の症状が問題となる時間の長さは、毎回短くなっているようだ',
+
+          ].map((prompt, index) => ({
+            prompt: `<div class="instruction">${index + 1}. ${prompt}</div>`, // インデックス +1 をつけて ) を追加
+            name: `ras${String(index + 1).padStart(2, '0')}`,
+            labels: ['まったく<br>そう思わない', 'そう思わない', 'どちらとも<br>いえない', 'そう思う', 'とても<br>そう思う'],
+            required: true
+          })),
+            
+            button_label: '次へすすむ',
+            on_finish: function(data) {
+                const newData = {};
+                Object.keys(data.response).forEach((key, idx) => {
+                  const value = data.response[key];
+                  // 特定のインデックスの場合は逆順に変換
+                  if (value !== null && value !== "") {
+                    // 1からの値に再設定
+                    newData[key] = value + 1;
+                  } else {
+                    newData[key] = ""; // 未回答の項目はそのまま
+                  }
+                });
+                data.response = newData; // 変換後のデータを保存
+              }
+            };
+
+// ras end//
+    
+
+    // Start the experiment
+    jsPsych.run([survey_id, 
+                ras
+                 ]);
+
+
+    </script>
+</html>
+

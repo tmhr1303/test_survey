@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>My experiment</title>
+    <script src="../dist/jspsych.js"></script>
+    <!-- survey plugins -->
+    <script src="../dist/plugin-survey-multi-choice.js"></script>
+    <script src="../dist/plugin-survey-likert.js"></script>
+    <script src="../dist/plugin-survey-html-form.js"></script>
+    <script src="../dist/plugin-survey-text.js"></script>
+
+    <!-- misc plugins -->
+    <script src="../dist/plugin-html-keyboard-response.js"></script> 
+    
+    <link rel="stylesheet" href="../dist/jspsych.css" />
+
+    <style>
+      .instruction {
+        max-width: 40rem; 
+        text-align: justify;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      font-weight: bold;
+      background-color: #c0e9ff;
+      margin: 1em 0;
+    }
+
+    body {
+      overflow-y: scroll; /* スクロールを有効にする */
+    }
+    </style>
+
+  </head>
+  <body></body>
+    <script>
+
+      var jsPsych = initJsPsych({
+        on_finish: function() {
+          var data = jsPsych.data.get().csv();
+          var encodedUri = encodeURI("data:text/csv;charset=utf-8," + data);
+          var link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", "survey_results.csv");
+          document.body.appendChild(link);
+          link.click();
+        }
+      });
+
+      // Page 1:被験者IDの入力 
+      var survey_id = {
+        type: jsPsychSurveyHtmlForm,
+        html: `
+        <div class="instruction">
+        <h2>識別用コードを入力してください。</h2>
+            あなたに割り当てられたID：<input name="participant_id" type="text" pattern="^[0-9]+$" style="width: 120px;" required>
+            <br>※半角数字で入力してください。
+        </div>
+        `,
+        required: true,
+        button_label: '次へすすむ',
+        on_finish: function(data) {
+          // 参加者IDをjsPsychのデータストアに保存
+          jsPsych.data.addProperties({participant_id: data.response.participant_id});
+        }
+      };
+
+
+// sfs //
+    // sfs_sheet01 ひきこもり
+    var sfs_sheet01 = {
+      type: jsPsychSurveyHtmlForm,
+      preamble: '<h1><div class="instruction">SFS・社会機能評価尺度</h1>',
+      html: `
+        <div class="instruction">
+            <h2>1. いつも何時に起きますか？</h2>
+                起きる時刻：<input name="sfs01" type="time" required> 頃
+            <br><br>
+            
+            <h2>2. 1日のうち、何時間ぐらいをひとりで過ごしますか？</h2>
+              <input type="radio" id="sfs02_01" name="sfs02" value="3" required> <label for="sfs02_01">0～3時間：ひとりで過ごす時間はたいへん短い</label><br>
+              <input type="radio" id="sfs02_02" name="sfs02" value="2" required> <label for="sfs02_02">3～6時間：たまにひとりで過ごす時間がある</label><br>
+              <input type="radio" id="sfs02_03" name="sfs02" value="1" required> <label for="sfs02_03">6～9時間：ひとりで過ごす時間が長い</label><br>
+              <input type="radio" id="sfs02_04" name="sfs02" value="0" required> <label for="sfs02_04">9～12時間：ひとりで過ごす時間はかなり長い</label><br>
+              <input type="radio" id="sfs02_05" name="sfs02" value="0" required> <label for="sfs02_05">12時間以上：ほとんどの時間をひとりで過ごす</label>
+            <br><br>
+
+            <h2>3. 家で自分から家族に話し掛けることはどのくらいありますか？</h2>
+              <input type="radio" id="sfs03_01" name="sfs03" value="0" required> <label for="sfs03_01">全くない</label>　
+              <input type="radio" id="sfs03_02" name="sfs03" value="1" required> <label for="sfs03_02">めったにない</label>　
+              <input type="radio" id="sfs03_03" name="sfs03" value="2" required> <label for="sfs03_03">たまにある</label>　
+              <input type="radio" id="sfs03_04" name="sfs03" value="3" required> <label for="sfs03_04">よくある</label>
+            <br><br>
+
+            <h2>4. 何かの目的で外出することはどのくらいありますか？</h2>
+              <input type="radio" id="sfs04_01" name="sfs04" value="0" required> <label for="sfs04_01">全くない</label>　
+              <input type="radio" id="sfs04_02" name="sfs04" value="1" required> <label for="sfs04_02">めったにない</label>　
+              <input type="radio" id="sfs04_03" name="sfs04" value="2" required> <label for="sfs04_03">たまにある</label>　
+              <input type="radio" id="sfs04_04" name="sfs04" value="3" required> <label for="sfs04_04">よくある</label>
+            <br><br>
+
+            <h2>5. よく知らない人に対して、あなたはどんな態度をとりますか？</h2>
+              <input type="radio" id="sfs05_01" name="sfs05" value="0" required> <label for="sfs05_01">その人を避ける</label>　
+              <input type="radio" id="sfs05_02" name="sfs05" value="1" required> <label for="sfs05_02">緊張する</label>　
+              <input type="radio" id="sfs05_03" name="sfs05" value="2" required> <label for="sfs05_03">普通に接する</label>　
+              <input type="radio" id="sfs05_04" name="sfs05" value="3" required> <label for="sfs05_04">友好的に接する</label>
+            <br>
+        </div>
+      `,
+      required: true,
+      button_label: '次へすすむ',
+      on_finish: function(data) {
+        const newData = {};
+
+        Object.keys(data.response).forEach((key) => {
+          const value = data.response[key];
+          if (key === 'sfs01') {
+            // sfs01_raw というデータに時刻の生値を入れる
+            newData['sfs01_raw'] = value;
+
+            const hour = parseInt(value.split(':')[0], 10);
+
+            newData[key] = hour < 9 ? 3 : hour < 11 ? 2 : hour < 13 ? 1 : 0;
+          } else {
+
+            newData[key] = value !== null && 
+                           value !== "" ? 
+                           value : ""; // 未回答の項目はそのまま
+          }
+        });
+
+        data.response = newData; // 変換後のデータを保存
+      }
+    };
+
+
+    // sfs_sheet02 対人関係
+    var sfs_sheet02 = {
+      type: jsPsychSurveyHtmlForm,
+      html: `
+        <div class="instruction">
+          <h2>6. 現在何人の友人がいますか？（定期的に会ったり、一緒に何かをしたりする人）</h2>
+            友達の人数：
+            <select name="sfs06" required>
+              <option value="" disabled selected>選択してください</option>
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="3">4</option>
+              <option value="3">5人以上</option>
+            </select>
+            <br><br>
+            
+          <h2>7. 異性の友人はいますか？または結婚していますか？</h2>
+            <input type="radio" id="sfs07_yes" name="sfs07" value="3" required><label for="sfs07_yes"> はい</label>　
+            <input type="radio" id="sfs07_no" name="sfs07" value="0" required><label for="sfs07_no"> いいえ</label>
+          <br><br>
+
+          <h2>8. 家族、友人、知人などと、どのくらいの頻度で会話をしますか？</h2>
+            <input type="radio" id="sfs08_never" name="sfs08" value="0" required><label for="sfs08_never"> 全くしない</label>　
+            <input type="radio" id="sfs08_rarely" name="sfs08" value="1" required><label for="sfs08_rarely"> めったにしない</label>　
+            <input type="radio" id="sfs08_sometimes" name="sfs08" value="2" required><label for="sfs08_sometimes"> たまにする</label>　
+            <input type="radio" id="sfs08_often" name="sfs08" value="3" required><label for="sfs08_often"> よくする</label>
+          <br><br>
+
+          <h2>9. 人と話をすることは、どのくらい難しいと感じますか？</h2>
+            <input type="radio" id="sfs09_very_easy" name="sfs09" value="3" required><label for="sfs09_very_easy"> とても簡単</label>　
+            <input type="radio" id="sfs09_easy" name="sfs09" value="2" required><label for="sfs09_easy"> 簡単</label>　
+            <input type="radio" id="sfs09_normal" name="sfs09" value="2" required><label for="sfs09_normal"> 普通</label>　
+            <input type="radio" id="sfs09_difficult" name="sfs09" value="1" required><label for="sfs09_difficult"> 難しい</label>　
+            <input type="radio" id="sfs09_very_difficult" name="sfs09" value="0" required><label for="sfs09_very_difficult"> とても難しい</label>
+          <br>
+        </div>
+      `,
+      required: true,
+      button_label: '次へすすむ',
+    };
+
+
+    // sfs_sheet03 自立（実行）
+    const sfs_sheet03 = {
+      type: jsPsychSurveyLikert,
+      preamble: `
+        <div class="instruction">
+          <h2>10. 最近3ヶ月間、以下の活動をどのくらいの頻度でしましたか？</h2>
+        </div>
+      `,
+      questions: [
+      '店で日用品を買う（助けを借りずに）', 
+      '皿洗い、片づけなど', 
+      '洗面、入浴', 
+      '自分の服を洗う',
+      '仕事を探す（現在働いていない場合）', 
+      '食料品を買いに出かける', 
+      '食事の支度をする', 
+      'ひとりで外出する',
+      'バスや電車を使う', 
+      'お金を使う', 
+      'お金の使い方を考える（家計簿をつける、銀行で記帳するなど）',
+      '自分で服を選んで買う', 
+      '身だしなみに気を付ける'
+    ].map((prompt, index) => ({
+      prompt: `<div class="instruction">${index + 1}) ${prompt}</div>`, // インデックス +1 をつけて ) を追加
+      name: `sfs10_${String(index + 1).padStart(2, '0')}`,
+      labels: ['全くしなかった', 'ほとんど<br>しなかった', 'たまにした', 'よくした'],
+      required: true
+    })),
+      button_label: '次へすすむ'
+    };
+
+
+    // sfs_sheet04 娯楽
+    const sfs_sheet04 = {
+      type: jsPsychSurveyLikert,
+      preamble: `
+        <div class="instruction">
+            <h2>11. 最近3ヶ月間、以下の活動をどのくらいの頻度でしましたか？</h2>
+        </div>`,
+      questions: [
+      '楽器の演奏、歌を歌う、音楽鑑賞', 
+      '手芸（編み物、縫い物など）',
+      '庭仕事、植物の世話',
+      '本、雑誌、新聞などを読む',
+      'テレビ、ビデオを見る',
+      'CD、ラジオを聴く',
+      '料理、お菓子作り', 
+      'ペットの世話',
+      '修繕作業（家具修理、ボタン付けなど）', 
+      '散歩', 
+      'ドライブ、サイクリング', 
+      'ゲームをする（テレビゲーム、将棋など）',
+      '買い物、ウィンドーショッピング', 
+      '芸術活動（絵画・工芸作品･ジグソーパズルなどの作製や鑑賞）', 
+      'その他の趣味'
+    ].map((prompt, index) => ({
+        prompt: `<div class="instruction">${index + 1}) ${prompt}</div>`, // インデックス +1 をつけて ) を追加
+        name: `sfs11_${String(index + 1).padStart(2, '0')}`,
+        labels: ['全くしなかった', 'ほとんど<br>しなかった', 'たまにした', 'よくした'],
+      required: true
+    })),
+      button_label: '次へすすむ'
+    };
+
+    // sfs_sheet05 能力
+    const sfs_sheet05 = {
+      type: jsPsychSurveyLikert,
+      preamble: `
+      <div class="instruction">
+          <h2>12. 以下の活動をどのくらい適切にできますか？</h2>
+      </div>`,
+      questions: [
+      '公共の乗り物を使う (電車、バスなど）', 
+      'お金を使う', 
+      'お金の使い方を考える、予算を立てる', 
+      '自分で料理する', 
+      '決まったものをいつもと同じ店で買う', 
+      '欲しいもの、必要なものを、適切な店で選んで購入する', 
+      '仕事を探す', 
+      '自分の服や下着を洗う', 
+      '身辺の清潔（入浴、歯磨きなど）', 
+      '整理整頓', 
+      '1人で外出する', 
+      '自分で服を選んで購入する',
+      '身なりに気を遣う'
+    ].map((prompt, index) => ({
+      prompt: `<div class="instruction">${index + 1}) ${prompt}</div>`, // インデックス +1 をつけて ) を追加
+      name: `sfs12_${String(index + 1).padStart(2, '0')}`,
+      labels: ['適切にできる', '援助があれば<br>できる', 'できない', 'やり方を<br>知らない'],
+      required: true
+    })),
+      button_label: '次へすすむ',
+      on_finish: function(data) {
+        const newData = {};
+        Object.keys(data.response).forEach((key, idx) => {
+          const value = data.response[key];
+          // 特定のインデックスの場合は逆順に変換
+          if (value !== null && value !== "") {
+            // reverseを定義
+            newData[key] = 3 - value;
+          } else {
+            newData[key] = ""; // 未回答の項目はそのまま
+          }
+        });
+        data.response = newData; // 変換後のデータを保存
+      }
+    };
+
+
+
+    // sfs_sheet06 社会参加
+    const sfs_sheet06 = {
+    type: jsPsychSurveyLikert,
+    preamble: `
+      <div class="instruction">
+        <h2>13. 最近3ヶ月間、以下の活動をどのくらいの頻度でしましたか？</h2>
+      </div>
+      `,
+    questions: [
+    '映画を見に行く', 
+    '劇場に行く、コンサートに行く', 
+    '屋内スポーツ観戦（バスケット、バレーなど）', 
+    '屋外スポーツ観戦（サッカー、野球など）',
+    '美術館・博物館に行く', 
+    '展示会に行く', 
+    '興味のある場所を訪れる、旅行に行く', 
+    '会合に出席する', 
+    '習い事に行く',
+    '親戚の家を訪ねる', 
+    '親戚が自分の家を訪ねて来る', 
+    '友人と会う', 
+    '宴会に出席する', 
+    '正式な場に出席する', 
+    'カラオケに行く',
+    'パチンコやゲームセンター、遊園地に行く', 
+    '屋内スポーツをする', 
+    '屋外スポーツをする', 
+    '学校や地域の行事に参加する',
+    '居酒屋やバーに行く', 
+    '外食をする', 
+    '墓参り、神社や寺、教会を訪れる、宗教活動をする'
+    ].map((prompt, index) => ({
+    prompt: `<div class="instruction">${index + 1}) ${prompt}</div>`, // インデックス +1 をつけて ) を追加
+    name: `sfs13_${String(index + 1).padStart(2, '0')}`,
+    labels: ['全くしなかった', 'ほとんど<br>しなかった', 'たまにした', 'よくした'],
+    required: true
+    })),
+    button_label: '次へすすむ'
+    };
+
+
+
+// sfs_sheet07 就労
+    var sfs_sheet07 = {
+      type: jsPsychSurveyHtmlForm,
+      html: `
+        <div class="instruction">
+          <h2>14. あなたは定期的に仕事をしていますか？</h2>
+          （職業訓練、授産施設、作業所を含む）<br>
+          ※当てはまるものを選択してください。
+        </p><br>
+          <input type="radio" id="sfs14_01" name="sfs14" value="5" required> <label for="sfs14_01">①次の状況のどれかに当てはまりますか<br>
+            　・1年以上、週30時間以上の仕事をこなしている<br>
+            　・1年以上、家事専従できちんと家事・育児をこなしている<br>
+            　・1年以上、学生でほとんどの授業に出席している</label>
+        </p><br>
+          <input type="radio" id="sfs14_02" name="sfs14" value="4" required> <label for="sfs14_02">【①に当てはまらない方】②次の状況のどれかに当てはまりますか<br>
+          　・半年以上、週30時間以上の仕事をこなしている<br>
+          　・半年以上、家事専従できちんと家事・育児をこなしている<br>
+          　・半年以上、学生でほとんどの授業に出席している</label>
+        </p><br>
+          <input type="radio" id="sfs14_03" name="sfs14" value="3" required> <label for="sfs14_03">【①～②に当てはまらない方】③次の状況のどれかに当てはまりますか<br>
+          　・週10時間以上の仕事をこなしている<br>
+          　・家事専従で手助けが必要だが何とか家事をこなせている<br>
+          　・学生で2分の1以上の授業に出席している</label>
+        </p><br>
+          【①～③に当てはまらない方】④次の状況に当てはまりますか<br>
+          　<input type="radio" id="sfs14_04" name="sfs14" value="2" required> <label for="sfs14_04">作業所・授産施設に行っている</label>
+        </p><br>
+          【①～④に当てはまらない方】⑤次の状況に当てはまりますか<br>
+          　<input type="radio" id="sfs14_05" name="sfs14" value="1" required> <label for="sfs14_05">デイケアに参加している</label><br>
+          　<input type="radio" id="sfs14_06" name="sfs14" value="0" required> <label for="sfs14_06">全く働いていない（デイケアにも行っていない）</label>
+         </p><br>
+
+         <h2>15. あなたは自分が何かの仕事に就けると思いますか？</h2>
+            <input type="radio" id="sfs15_01" name="sfs15" value="2" required> <label for="sfs15_01">そう思う</label>　
+            <input type="radio" id="sfs15_02" name="sfs15" value="1" required> <label for="sfs15_02">難しいかもしれない</label>　
+            <input type="radio" id="sfs15_03" name="sfs15" value="0" required> <label for="sfs15_03">できないと思う</label>
+          </p><br>
+
+          <h2>16. 新しい仕事を探そうとしていますか？（ハローワークに行く、求人広告を見るなど）</h2>
+            <input type="radio" id="sfs16_01" name="sfs16" value="0" required> <label for="sfs16_01">全くしていない</label>　
+            <input type="radio" id="sfs16_02" name="sfs16" value="1" required> <label for="sfs16_02">ほとんどしない</label>　
+            <input type="radio" id="sfs16_03" name="sfs16" value="2" required> <label for="sfs16_03">たまにする</label>　
+            <input type="radio" id="sfs16_04" name="sfs16" value="3" required> <label for="sfs16_04">よくする</label>
+          <br><br>
+        </div>
+      `,
+      required: true,
+      button_label: '次へすすむ',
+    };
+
+
+    //sheetをまとめる
+    var sfs = {
+      timeline: [sfs_sheet01, sfs_sheet02, sfs_sheet03, sfs_sheet04, sfs_sheet05, sfs_sheet06, sfs_sheet07]
+      };
+
+// sfs end//
+
+
+    // Start the experiment
+    jsPsych.run([survey_id, 
+                 sfs
+                 ]);
+
+
+    </script>
+</html>
+

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>My experiment</title>
+    <script src="../dist/jspsych.js"></script>
+    <!-- survey plugins -->
+    <script src="../dist/plugin-survey-multi-choice.js"></script>
+    <script src="../dist/plugin-survey-likert.js"></script>
+    <script src="../dist/plugin-survey-html-form.js"></script>
+    <script src="../dist/plugin-survey-text.js"></script>
+
+    <!-- misc plugins -->
+    <script src="../dist/plugin-html-keyboard-response.js"></script> 
+    
+    <link rel="stylesheet" href="../dist/jspsych.css" />
+
+    <style>
+    </style>
+
+  </head>
+  <body></body>
+    <script>
+
+      var jsPsych = initJsPsych({
+        on_finish: function() {
+          var data = jsPsych.data.get().csv();
+          var encodedUri = encodeURI("data:text/csv;charset=utf-8," + data);
+          var link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", "survey_results.csv");
+          document.body.appendChild(link);
+          link.click();
+        }
+      });
+
+
+    // Page 1:被験者IDの入力 
+      var survey_id = {
+        type: jsPsychSurveyHtmlForm,
+        html: `
+        <div class="instruction">
+        <h2>識別用コードを入力してください。</h2>
+            あなたに割り当てられたID：<input name="participant_id" type="text" pattern="^[0-9]+$" style="width: 120px;" required>
+            <br>※半角数字で入力してください。
+        </div>
+        `,
+        required: true,
+        button_label: '次へすすむ',
+        on_finish: function(data) {
+          // 参加者IDをjsPsychのデータストアに保存
+          jsPsych.data.addProperties({participant_id: data.response.participant_id});
+        }
+      };
+
+
+// Euro 5d-5L//
+    const euro_qol5d_5l = {
+        type: jsPsychSurveyHtmlForm,
+        preamble: `
+            <div class="instruction">
+                <h1>健康に関するアンケート</h1>
+                あなたがご自身の健康についてどのように考えておられるかを、お伺いしたいと思っております。<br>
+                もし理解しづらいことや、はっきりわからないことがありましたら、回答中でもその旨をお伝え頂ければと思います。<br>
+                このアンケートに正答や誤答はありません。あなたご自身の考え方を、お伺いできればと思います。
+                <h2>あなたの <u>今日の</u>健康を、もっともよく表す選択肢を選択してください。</h2>
+            </div>
+            `,
+        html: `
+        <div class="instruction">
+            <h3>あなたの<u>移動の程度</u>について最もよく当てはまるのはどれでしょうか？</h3>
+            <input type="radio" id="MB1" name="mobility" value="5" required>
+                <label for="MB1">歩き回るのに問題はない</label><br>
+            <input type="radio" id="MB2" name="mobility" value="4">
+                <label for="MB2">歩き回るのに少し問題がある</label><br>
+            <input type="radio" id="MB3" name="mobility" value="3">
+                <label for="MB3">歩き回るのに中程度の問題がある</label><br>
+            <input type="radio" id="MB4" name="mobility" value="2">
+                <label for="MB4">歩き回るのにかなり問題がある</label><br>
+            <input type="radio" id="MB5" name="mobility" value="1">
+                <label for="MB5">歩き回ることができない</label>
+        </div><br>
+        <div class="instruction">
+            <h3>あなたの<u>身の回りの管理</u>について最もよく当てはまるのはどれでしょうか？</h3>
+            <input type="radio" id="SC1" name="self_care" value="5" required>
+                <label for="SC1">自分で身体を洗ったり着替えをするのに問題はない</label><br>
+            <input type="radio" id="SC2" name="self_care" value="4">
+                <label for="SC2">自分で身体を洗ったり着替えをするのに少し問題がある</label><br>
+            <input type="radio" id="SC3" name="self_care" value="3">
+                <label for="SC3">自分で身体を洗ったり着替えをするのに中程度の問題がある</label><br>
+            <input type="radio" id="SC4" name="self_care" value="2">
+                <label for="SC4">自分で身体を洗ったり着替えをするのにかなり問題がある</label><br>
+            <input type="radio" id="SC5" name="self_care" value="1">
+                <label for="SC5">自分で身体を洗ったり着替えをすることができない</label>
+        </div><br>
+        <div class="instruction">
+            <h3>あなたの<u>ふだんの活動</u>について最もよく当てはまるのはどれでしょうか？</h3>
+            例えば、仕事や勉強、家事、余暇活動について考えてください。<br>
+            <input type="radio" id="UA1" name="usual_activities" value="5" required>
+                <label for="UA1">ふだんの活動を行うのに問題はない</label><br>
+            <input type="radio" id="UA2" name="usual_activities" value="4">
+                <label for="UA2">ふだんの活動を行うのに少し問題がある</label><br>
+            <input type="radio" id="UA3" name="usual_activities" value="3">
+                <label for="UA3">ふだんの活動を行うのに中程度の問題がある</label><br>
+            <input type="radio" id="UA4" name="usual_activities" value="2">
+                <label for="UA4">ふだんの活動を行うのにかなり問題がある</label><br>
+            <input type="radio" id="UA5" name="usual_activities" value="1">
+                <label for="UA5">ふだんの活動を行うことができない</label>
+        </div><br>
+        <div class="instruction">
+            <h3>あなたの<u>痛みや不快感</u>について最もよく当てはまるのはどれでしょうか？</h3>
+            <input type="radio" id="PD1" name="pain_discomfort" value="5" required>
+                <label for="PD1">痛みや不快感はない</label><br>
+            <input type="radio" id="PD2" name="pain_discomfort" value="4">
+                <label for="PD2">少し痛みや不快感がある</label><br>
+            <input type="radio" id="PD3" name="pain_discomfort" value="3">
+                <label for="PD3">中程度の痛みや不快感がある</label><br>
+            <input type="radio" id="PD4" name="pain_discomfort" value="2">
+                <label for="PD4">かなりの痛みや不快感がある</label><br>
+            <input type="radio" id="PD5" name="pain_discomfort" value="1">
+                <label for="PD5">極度の痛みや不快感がある</label>
+        </div><br>
+        <div class="instruction">
+            <h3>あなたの<u>不安やふさぎ込み</u>について最もよく当てはまるのはどれでしょうか？</h3>
+            <input type="radio" id="AD1" name="anxiety_depression" value="5" required>
+                <label for="AD1">不安でもふさぎ込んでもいない</label><br>
+            <input type="radio" id="AD2" name="anxiety_depression" value="4">
+                <label for="AD2">少し不安あるいはふさぎ込んでいる</label><br>
+            <input type="radio" id="AD3" name="anxiety_depression" value="3">
+                <label for="AD3">中程度に不安あるいはふさぎ込んでいる</label><br>
+            <input type="radio" id="AD4" name="anxiety_depression" value="2">
+                <label for="AD4">かなり不安あるいはふさぎ込んでいる</label><br>
+            <input type="radio" id="AD5" name="anxiety_depression" value="1">
+                <label for="AD5">極度に不安あるいはふさぎ込んでいる</label>
+        </div><br>
+        <div class="instruction">
+            <h3>今日の健康状態</h3>
+                
+            <h4>
+            あなたの<u>今日の</u>健康が、どれくらい良いか悪いかをお伺いします。
+            0から100の数値が書かれたものさしが表示されます。<br>
+            あなたの<u>今日の</u>健康を表している位置がどこか示してください。</h4>
+            <ul>
+                <li>あなたが想像できる<u>最も悪い</u>健康が、一番左側（0）です。<br>
+                <li>あなたが想像できる<u>最も良い</u>健康が、一番右側（100）です。
+            </ul>
+            
+            <input type="range" id="health_vas" name="health_vas" 
+            min="0" max="100" style="width: 100%;" required>
+        </div><br>
+      `,  
+        required: true,
+        button_label: '次へすすむ',
+    };  
+    
+
+
+// Euro QOL 5D 5l end//
+
+    // Start the experiment
+    jsPsych.run([
+    survey_id, 
+    euro_qol5d_5l
+                 ]);
+
+
+    </script>
+</html>
+
+
