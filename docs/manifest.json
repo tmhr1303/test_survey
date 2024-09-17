@@ -1,7 +1,7 @@
 {
   "name": "jsPsych Experiment",
   "short_name": "Experiment",
-  "start_url": "./test/timeuse_dynamic.html",
+  "start_url": "./test/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
