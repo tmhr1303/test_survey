@@ -2,7 +2,7 @@
   "name": "事前調査1",
   "short_name": "survey01",
   "start_url": "./test/survey01.html",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#ffffff",
   "theme_color": "#000000",
   "icons": [
