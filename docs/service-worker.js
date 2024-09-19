@@ -10,13 +10,7 @@ const urlsToCache = [
   './dist/plugin-survey-multi-select.js',
   './dist/plugin-survey-text.js',
 
-  './test/basic_survey.html',
-  './test/Euro_qol5d_5l.html',
-  './test/ras.html',
-  './test/sfs(social_functioning_sacle).html',
-  './test/timeuse_dynamic.html',
-  './test/ucla_ls.html',
-  './test/who-qol26.html',
+  './test/survey01.html'
 ];
 
 self.addEventListener('install', event => {

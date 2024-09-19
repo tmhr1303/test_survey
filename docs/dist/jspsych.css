@@ -541,13 +541,33 @@
   text-align: justify;
 }
 
+
+h1 {
+  line-height: 1;    /* 行間を広げる */
+  }
+
 h2 {
 font-size: 1.5em;
 font-weight: bold;
 background-color: #c0e9ff;
-margin: 1em 0;
+margin: 0.5em 0;
 }
 
 body {
 overflow-y: scroll; /* スクロールを有効にする */
+}
+
+/* ボックスの設定 */
+.box2 {
+  padding: 0.5em 1em;
+  margin: 2em 0;
+  font-weight: bold;
+  color: #004db2;/*文字色*/
+  background: #ffffff92;
+  border: solid 3px #004db2;/*線*/
+  border-radius: 10px;/*角の丸み*/
+}
+.box2 p {
+  margin: 0; 
+  padding: 0;
 }

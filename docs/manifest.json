@@ -1,18 +1,18 @@
 {
-  "name": "jsPsych Experiment",
-  "short_name": "Experiment",
-  "start_url": "./test/index.html",
+  "name": "事前調査1",
+  "short_name": "survey01",
+  "start_url": "./test/survey01.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "/icons/logo.png",
+      "src": "/icons/survey01_192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/icons/logo.png",
+      "src": "/icons/survey01_512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
