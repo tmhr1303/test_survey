@@ -1,0 +1,20 @@
+{
+  "name": "事前調査2",
+  "short_name": "survey02",
+  "start_url": "./test/survey02.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/icons/survey02_192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icons/survey02_512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

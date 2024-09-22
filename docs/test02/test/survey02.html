@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>事前調査2</title>
+    <script src="../../dist/jspsych.js"></script>
+    <!-- survey plugins -->
+    <script src="../../dist/plugin-survey-multi-choice.js"></script>
+    <script src="../../dist/plugin-survey-likert.js"></script>
+    <script src="../../dist/plugin-survey-html-form.js"></script>
+    <script src="../../dist/plugin-survey-text.js"></script>
+
+    <!-- misc plugins -->
+    <script src="../../dist/plugin-html-keyboard-response.js"></script> 
+    
+    <link rel="stylesheet" href="../../dist/jspsych.css" />
+
+
+    <!-- misc plugins -->
+    <script src="../dist/plugin-html-keyboard-response.js"></script> 
+    
+    <link rel="stylesheet" href="../dist/jspsych.css" />
+
+    <style>
+      .instruction {
+          max-width: 40rem; 
+          text-align: justify;
+      }
+
+      h2 {
+        font-size: 1.5em;
+        font-weight: bold;
+        background-color: #c0e9ff;
+        margin: 1em 0;
+      }
+
+      body {
+        overflow-y: scroll; /* スクロールを有効にする */
+      }
+    </style>
+
+  </head>
+  <body></body>
+    <script>
+
+      // ファイル名取得
+      const htmlFileName = window.location.pathname.split("/").pop().split(".")[0];  // 拡張子を除く
+
+      // 参加者ID取得
+      var participant_id = "";
+
+
+      var jsPsych = initJsPsych({
+        on_finish: function() {
+          var data = jsPsych.data.get().csv();
+          var encodedUri = encodeURI("data:text/csv;charset=utf-8," + data);
+          var link = document.createElement("a");
+
+          // ファイル名定義
+          var fileName = htmlFileName + "_result_" + participant_id + ".csv";
+
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", fileName);
+
+          // ダウンロードボタンを作成
+          var downloadButton = document.createElement("button");
+          downloadButton.innerHTML = "回答ありがとうございました<br>このボタンを押した後<br>「ダウンロード」ボタンを押してください";
+
+          // ボタンのスタイルを設定
+          downloadButton.style.position = "absolute";
+          downloadButton.style.top = "50%";
+          downloadButton.style.left = "50%";
+          downloadButton.style.transform = "translate(-50%, -50%)";
+          downloadButton.style.padding = "20px 40px";
+          downloadButton.style.fontSize = "24px";
+          downloadButton.style.backgroundColor = "#4CAF50";
+          downloadButton.style.color = "white";
+          downloadButton.style.border = "none";
+          downloadButton.style.borderRadius = "10px";
+          downloadButton.style.cursor = "pointer";
+
+          // ボタンがクリックされた時にダウンロードを実行
+          downloadButton.onclick = function() {
+            link.click();
+          };
+
+          // ボタンをドキュメントに追加
+          document.body.appendChild(downloadButton);
+
+        // 背景色を少し変えて目立たせる
+        document.body.style.backgroundColor = "#f0f0f0";
+      }
+      });
+
+
+      // Page 1:被験者IDの入力 
+      var survey_id = {
+        type: jsPsychSurveyHtmlForm,
+        html: `
+        <div class="instruction">
+        <h2>識別用コードを入力してください。</h2>
+            あなたに割り当てられたID：
+              <input name="participant_id" type="text" inputmode="numeric" pattern="^[0-9]+$" required 
+              placeholder="入力してください" style="border: 2px solid #ff6f33;">
+            <br>※半角数字で入力してください。
+        </div>
+        `,
+        required: true,
+        button_label: '次へすすむ',
+        on_finish: function(data) {
+          // 参加者IDをjsPsychのデータストアに保存
+          participant_id = data.response.participant_id;  // 参加者IDを保存
+          jsPsych.data.addProperties({participant_id: data.response.participant_id});
+        }
+      };
+
+
+// qol26 //
+    // qol26_sheet01
+    var qol26_sheet01 = {
+        type: jsPsychSurveyLikert,
+        preamble: `
+        <div class="instruction">
+          <h1>WHO-QOL26</h1>
+          <h2>以下の質問はあなたが<u>過去2週間</u>にどのくらいあるか評価し、満足していたかについてお聞きするものです。</h2>
+        </div>
+        `,
+        questions: [
+            {
+                prompt: `<div class="instruction"><strong>Q1 自分の生活の質をどのように評価しますか。</strong></div>`, 
+                name: 'qol26_01', 
+                labels: ['まったく悪い', '悪い', 'ふつう', '良い', '常に良い'], 
+                values: [1, 2, 3, 4, 5], 
+                required: true
+            },
+            {
+                prompt: `<div class="instruction"><strong>Q2 自分の健康状態に満足していますか。</strong></div>`, 
+                name: 'qol26_02', 
+                labels: ['まったく不満', '不満', 'どちらでもない', '満足', '非常に満足'], 
+                values: [1, 2, 3, 4, 5], 
+                required: true
+            },
+        ],
+        required: true,
+        button_label: '次へすすむ',
+    };  
+
+
+    // qol26_sheet02
+    const qol26_sheet02 = {
+        type: jsPsychSurveyLikert,
+        preamble: `
+          <div class="instruction">
+            <h2>以下の質問はあなたが<u>過去2週間</u>にどのくらいある事柄を経験されたかについてお聞きするものです。</h2>
+
+            <div class="box2">
+            <p>
+            もし、たくさん経験されていたら、「非常に」を選択してください。<br>
+            もし、その事柄を経験していない場合は、「まったくない」を選択してください。
+            </p>
+            </div>
+
+          </div>
+        `,
+        questions: [
+        '体の痛みや不快感のせいで、しなければならないことがどのくらい制限されていますか。', 
+        '毎日の生活の中で治療（医療）がどのくらい必要ですか。',
+        '毎日の生活をどのくらい楽しく過ごしていますか。',
+        '毎日の生活をどのくらい集中することができますか。',
+        '毎日の生活はどのくらい安全ですか。',
+        '自分の健康状態に満足していますか。',
+        'あなたの生活環境はどのくらい健康的ですか。',
+        '毎日の生活を送るための活力はありますか。',
+        '自分の容姿（外見）を受け入れることができますか。',
+        '必要なものを買えるだけのお金を持っていますか。',
+        '毎日の生活に必要な情報をどのくらい得ることができますか。',
+        '余暇を楽しむ機会はどのくらいありますか。',
+        '家の周囲を出まわることがよくありますか。',
+      ].map((prompt, index) => ({
+        prompt: `<div class="instruction"><strong>Q${index + 3} ${prompt}</strong></div>`, // インデックス +3 をつけて ) を追加
+        name: `qol26_${String(index + 3).padStart(2, '0')}`,
+        labels: ['まったくない', '少しだけ', '多少は', 'かなり', '非常に'], // 選択肢
+        required: true
+      })),
+        
+        button_label: '次へすすむ',
+        on_finish: function(data) {
+          const newData = {};
+          Object.keys(data.response).forEach((key, idx) => {
+            const value = data.response[key];
+            // 特定のインデックスの場合は逆順に変換
+            if (value !== null && value !== "") {
+              // reverseを定義
+              if ([3, 4, 26].includes(idx + 3)) {
+                // 逆順である場合 5, 4, 3, 2, 1 を出力
+                newData[key] = 5 - value;
+              } else {
+                // 通常の順序で 1, 2, 3, 4, 5 を出力
+                newData[key] = value + 1;
+              }
+            } else {
+              newData[key] = ""; // 未回答の項目はそのまま
+            }
+          });
+          data.response = newData; // 変換後のデータを保存
+        }
+      };
+
+
+
+
+    var qol26_sheet03 = {
+        type: jsPsychSurveyLikert,
+        preamble: `
+          <div class="instruction">
+            <h2>以下の質問はあなたが<u>過去2週間</u>にどのくらいできたか、満足したかについてお聞きするものです。</h2>
+          </div>
+        `,
+        questions: [
+        '睡眠は満足いくものですか。', 
+        '毎日の活動をやり遂げる能力に満足していますか。',
+        '自分の仕事をする能力に満足していますか。',
+        '自分自身に満足していますか。',
+        '人間関係に満足していますか。',
+        '性生活に満足していますか。',
+        '友人たちの支えに満足していますか。',
+        '家のといえのまわりの環境に満足していますか。',
+        '医療施設や福祉サービスの利用しやすさに満足していますか。',
+        '周辺の交通の便に満足していますか。',
+      ].map((prompt, index) => ({
+        prompt: `<div class="instruction"><strong>Q${index + 16} ${prompt}</strong></div>`, // インデックス +3 をつけて ) を追加
+        name: `qol26_${String(index + 16).padStart(2, '0')}`,
+        labels: ['まったく不満', '不満', 'どちらでもない', '満足', '非常に満足'], // 選択肢
+        required: true
+      })),
+              
+        button_label: '次へすすむ',
+        on_finish: function(data) {
+          const newData = {};
+          Object.keys(data.response).forEach((key, idx) => {
+            const value = data.response[key];
+            // 特定のインデックスの場合は逆順に変換
+            if (value !== null && value !== "") {
+              // reverseを定義
+              if ([3, 4, 26].includes(idx + 16)) {
+                // 逆順である場合 5, 4, 3, 2, 1 を出力
+                newData[key] = 5 - value;
+              } else {
+                // 通常の順序で 1, 2, 3, 4, 5 を出力
+                newData[key] = value + 1;
+              }
+            } else {
+              newData[key] = ""; // 未回答の項目はそのまま
+            }
+          });
+          data.response = newData; // 変換後のデータを保存
+        }
+      };
+      
+      
+      qol26_sheet04 = {
+        type: jsPsychSurveyLikert,
+        preamble: `
+          <div class="instruction">
+            <h2>以下の質問はあなたが<u>過去2週間</u>にどのくらい頻繁に経験したかについてお聞きするものです。</h2>
+          </div>
+        `,
+        questions: [
+        '気分がすぐれなかったり、絶望、不安、落ち込みといった嫌な気分をどのくらい頻繁に感じますか。',
+      ].map((prompt, index) => ({
+        prompt: `<div class="instruction"><strong>Q${index + 26} ${prompt}</strong></div>`, // インデックス +3 をつけて ) を追加
+        name: `qol26_${String(index + 26).padStart(2, '0')}`,
+        labels: ['まったくない', '少しだけ', '多少は', 'かなり', '非常に'], // 選択肢
+        required: true
+      })),
+              
+        button_label: '次へすすむ',
+        on_finish: function(data) {
+          const newData = {};
+          Object.keys(data.response).forEach((key, idx) => {
+            const value = data.response[key];
+            // 特定のインデックスの場合は逆順に変換
+            if (value !== null && value !== "") {
+              // reverseを定義
+              if ([3, 4, 26].includes(idx + 26)) {
+                // 逆順である場合 5, 4, 3, 2, 1 を出力
+                newData[key] = 5 - value;
+              } else {
+                // 通常の順序で 1, 2, 3, 4, 5 を出力
+                newData[key] = value + 1;
+              }
+            } else {
+              newData[key] = ""; // 未回答の項目はそのまま
+            }
+          });
+          data.response = newData; // 変換後のデータを保存
+        }
+    };
+
+
+    //sheetをまとめる
+    var qol26 = {
+        timeline: [qol26_sheet01, qol26_sheet02, qol26_sheet03, qol26_sheet04]
+    };
+
+// qol26 end//
+
+
+// Euro 5d-5L//
+const euro_qol5d_5l = {
+    type: jsPsychSurveyHtmlForm,
+    preamble: `
+        <div class="instruction">
+            <h1>健康に関するアンケート</h1>
+            <div class="box2">
+            <p>
+            あなたがご自身の健康についてどのように考えておられるかを、お伺いします。<br>
+            もし理解しづらいことや、はっきりわからないことがありましたら、回答中でもその旨をお伝え頂ければと思います。<br>
+            このアンケートに正答や誤答はありません。あなたご自身の考え方を、お伺いできればと思います。
+            </p>
+            </div>
+
+            <h1>あなたの <u>今日の</u>健康を、もっともよく表す選択肢を選択してください。</h1>
+        </div>
+        `,
+    html: `
+    <div class="instruction">
+        <h2>あなたの<u>移動の程度</u>について最もよく当てはまるのはどれでしょうか？</h2>
+        <input type="radio" id="MB1" name="mobility" value="5" required>
+            <label for="MB1">歩き回るのに問題は<u>ない</u></label><br>
+        <input type="radio" id="MB2" name="mobility" value="4">
+            <label for="MB2">歩き回るのに<u>少し</u>問題がある</label><br>
+        <input type="radio" id="MB3" name="mobility" value="3">
+            <label for="MB3">歩き回るのに<u>中程度の</u>問題がある</label><br>
+        <input type="radio" id="MB4" name="mobility" value="2">
+            <label for="MB4">歩き回るのに<u>かなり</u>問題がある</label><br>
+        <input type="radio" id="MB5" name="mobility" value="1">
+            <label for="MB5">歩き回ることが<u>できない</u></label>
+    </div><br>
+
+    <div class="instruction">
+        <h2>あなたの<u>身の回りの管理</u>について最もよく当てはまるのはどれでしょうか？</h2>
+        <input type="radio" id="SC1" name="self_care" value="5" required>
+            <label for="SC1">自分で身体を洗ったり着替えをするのに問題は<u>ない</u></label><br>
+        <input type="radio" id="SC2" name="self_care" value="4">
+            <label for="SC2">自分で身体を洗ったり着替えをするのに<u>少し</u>問題がある</label><br>
+        <input type="radio" id="SC3" name="self_care" value="3">
+            <label for="SC3">自分で身体を洗ったり着替えをするのに<u>中程度の</u>問題がある</label><br>
+        <input type="radio" id="SC4" name="self_care" value="2">
+            <label for="SC4">自分で身体を洗ったり着替えをするのに<u>かなり</u>問題がある</label><br>
+        <input type="radio" id="SC5" name="self_care" value="1">
+            <label for="SC5">自分で身体を洗ったり着替えをすることが<u>できない</u></label>
+    </div><br>
+    
+    <div class="instruction">
+        <h2>あなたの<u>ふだんの活動</u>について最もよく当てはまるのはどれでしょうか？</h2>
+        例えば、仕事や勉強、家事、余暇活動について考えてください。<br>
+        <input type="radio" id="UA1" name="usual_activities" value="5" required>
+            <label for="UA1">ふだんの活動を行うのに問題は<u>ない</u></label><br>
+        <input type="radio" id="UA2" name="usual_activities" value="4">
+            <label for="UA2">ふだんの活動を行うのに<u>少し</u>問題がある</label><br>
+        <input type="radio" id="UA3" name="usual_activities" value="3">
+            <label for="UA3">ふだんの活動を行うのに<u>中程度の</u>問題がある</label><br>
+        <input type="radio" id="UA4" name="usual_activities" value="2">
+            <label for="UA4">ふだんの活動を行うのに<u>かなり</u>問題がある</label><br>
+        <input type="radio" id="UA5" name="usual_activities" value="1">
+            <label for="UA5">ふだんの活動を行うことが<u>できない</u></label>
+    </div><br>
+
+    <div class="instruction">
+        <h2>あなたの<u>痛みや不快感</u>について最もよく当てはまるのはどれでしょうか？</h2>
+        <input type="radio" id="PD1" name="pain_discomfort" value="5" required>
+            <label for="PD1">痛みや不快感は<u>ない</u></label><br>
+        <input type="radio" id="PD2" name="pain_discomfort" value="4">
+            <label for="PD2"><u>少し</u>痛みや不快感がある</label><br>
+        <input type="radio" id="PD3" name="pain_discomfort" value="3">
+            <label for="PD3"><u>中程度の</u>痛みや不快感がある</label><br>
+        <input type="radio" id="PD4" name="pain_discomfort" value="2">
+            <label for="PD4"><u>かなりの</u>痛みや不快感がある</label><br>
+        <input type="radio" id="PD5" name="pain_discomfort" value="1">
+            <label for="PD5"><u>極度の</u>痛みや不快感がある</label>
+    </div><br>
+
+    <div class="instruction">
+        <h2>あなたの<u>不安やふさぎ込み</u>について最もよく当てはまるのはどれでしょうか？</h2>
+        <input type="radio" id="AD1" name="anxiety_depression" value="5" required>
+            <label for="AD1">不安でもふさぎ込んでも<u>いない</u></label><br>
+        <input type="radio" id="AD2" name="anxiety_depression" value="4">
+            <label for="AD2"><u>少し</u>不安あるいはふさぎ込んでいる</label><br>
+        <input type="radio" id="AD3" name="anxiety_depression" value="3">
+            <label for="AD3"><u>中程度に</u>不安あるいはふさぎ込んでいる</label><br>
+        <input type="radio" id="AD4" name="anxiety_depression" value="2">
+            <label for="AD4"><u>かなり</u>不安あるいはふさぎ込んでいる</label><br>
+        <input type="radio" id="AD5" name="anxiety_depression" value="1">
+            <label for="AD5"><u>極度に</u>不安あるいはふさぎ込んでいる</label>
+    </div><br>
+
+    <div class="instruction">
+        <h2>今日の健康状態</h2>
+        <h3>
+        あなたの<u>今日の</u>健康が、どれくらい良いか悪いかをお伺いします。
+        0から100の数値が書かれたものさしが表示されます。<br>
+        あなたの<u>今日の</u>健康を表している位置がどこか示してください。</h3>
+        
+        <div class="box2">
+            <p>
+            <ul>
+                <li>あなたが想像できる<u>最も悪い</u>健康が、一番左側（0）です。<br>
+                <li>あなたが想像できる<u>最も良い</u>健康が、一番右側（100）です。
+            </ul>
+            </p>
+        </div>
+        
+        <label for="health_vas">0 25 50 <span id="sliderValue">75 100</span></label>
+        <input type="range" id="health_vas" name="health_vas" 
+        min="0" max="100" step="1" style="width: 100%;" list="tickmarks" required>
+            <datalist id="tickmarks">
+                <option value="0" label="0"></option>
+                <option value="25" label="25"></option>
+                <option value="50" label="50"></option>
+                <option value="75" label="75"></option>
+                <option value="100" label="100"></option>
+            </datalist>
+    </div>
+    
+    <br><br>
+    <i>© EuroQol Research Foundation. EQ-5D™ is a trade mark of the EuroQol Research Foundation. Japan (Japanese) v1.2 </i>
+    <br>
+  `,  
+    required: true,
+    button_label: '次へすすむ',
+};  
+
+
+
+// Euro QOL 5D 5l end//
+
+
+    // Start the experiment
+    jsPsych.run([survey_id, 
+                 qol26,
+                 euro_qol5d_5l
+                 ]);
+
+
+    </script>
+</html>
+
