@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>事前調査1</title>
+    <script src="../dist/jspsych.js"></script>
+    <!-- survey plugins -->
+    <script src="../dist/plugin-survey-multi-choice.js"></script>
+    <script src="../dist/plugin-survey-likert.js"></script>
+    <script src="../dist/plugin-survey-html-form.js"></script>
+    <script src="../dist/plugin-survey-text.js"></script>
+
+    <!-- misc plugins -->
+    <script src="../dist/plugin-html-keyboard-response.js"></script> 
+    
+    <link rel="stylesheet" href="../dist/jspsych.css" />
+
+    <style>
+    </style>
+
+  </head>
+  <body></body>
+    <script>
+
+
+      // ファイル名取得
+      const htmlFileName = window.location.pathname.split("/").pop().split(".")[0];  // 拡張子を除く
+
+      // 参加者ID取得
+      var participant_id = "";
+
+
+      var jsPsych = initJsPsych({
+        on_finish: function() {
+          var data = jsPsych.data.get().csv();
+          var encodedUri = encodeURI("data:text/csv;charset=utf-8," + data);
+          var link = document.createElement("a");
+
+          // ファイル名定義
+          var fileName = htmlFileName + "_result_" + participant_id + ".csv";
+
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", fileName);
+
+          // ダウンロードボタンを作成
+          var downloadButton = document.createElement("button");
+          downloadButton.innerHTML = "回答ありがとうございました<br>このボタンを押した後<br>「ダウンロード」ボタンを押してください";
+
+          // ボタンのスタイルを設定
+          downloadButton.style.position = "absolute";
+          downloadButton.style.top = "50%";
+          downloadButton.style.left = "50%";
+          downloadButton.style.transform = "translate(-50%, -50%)";
+          downloadButton.style.padding = "20px 40px";
+          downloadButton.style.fontSize = "24px";
+          downloadButton.style.backgroundColor = "#4CAF50";
+          downloadButton.style.color = "white";
+          downloadButton.style.border = "none";
+          downloadButton.style.borderRadius = "10px";
+          downloadButton.style.cursor = "pointer";
+
+          // ボタンがクリックされた時にダウンロードを実行
+          downloadButton.onclick = function() {
+            link.click();
+          };
+
+          // ボタンをドキュメントに追加
+          document.body.appendChild(downloadButton);
+
+        // 背景色を少し変えて目立たせる
+        document.body.style.backgroundColor = "#f0f0f0";
+      }
+      });
+
+
+      // Page 1:被験者IDの入力 
+      var survey_id = {
+        type: jsPsychSurveyHtmlForm,
+        html: `
+        <div class="instruction">
+            <h2>識別用コードを入力してください。</h2>
+                あなたに割り当てられたID：
+                  <input name="participant_id" type="text" inputmode="numeric" pattern="^[0-9]+$" required 
+                  placeholder="入力してください" style="border: 2px solid #ff6f33;">
+                  <br>※半角数字で入力してください。
+                  <br><br>
+        </div>
+        `,
+        required: true,
+        button_label: '次へすすむ',
+        on_finish: function(data) {
+          // 参加者IDをjsPsychのデータストアに保存
+          participant_id = data.response.participant_id;  // 参加者IDを保存
+          jsPsych.data.addProperties({participant_id: data.response.participant_id});
+        }
+      };
+
+
+// basic //
+    // basic_sheet01
+    const basic_sheet01 = {
+        type: jsPsychSurveyHtmlForm,
+        preamble: `
+            <div class="instruction">
+                <h1>基本情報調査票</h1>
+                <h2>1. あなたの現在の状況についてお聞きします。</h2>
+            </div>
+            `,
+        html: `
+            <div class="instruction">
+            <h3>1-1. あなたの性別をお答えください。</h3>
+                <input type="radio" id="survey01_01" name="sex" required value="male">
+                  <label for="survey01_01">男性</label>　
+                <input type="radio" id="survey01_02" name="sex" required value="female">
+                  <label for="survey01_02">女性</label>　
+            <br><br>
+            
+            <h3>1-2. あなたの年齢をお答えください。</h3>
+                <input name="age" id="age" type="text" inputmode="numeric" pattern="^[0-9]+$" required
+                placeholder="入力してください" style="border: 2px solid #ff6f33;">歳  
+            <br><br>
+              
+            <h3>1-3. 配偶者の有無をお答えください。</h3>
+                <input type="radio" id="survey03_01" name="spouse" required value="unmarried">
+                  <label for="survey03_01">未婚</label>　
+                <input type="radio" id="survey03_02" name="spouse" required value="married">
+                  <label for="survey03_02">配偶者あり</label>　
+                <input type="radio" id="survey03_03" name="spouse" required value="divorced_widowed">
+                  <label for="survey03_03">死別・離婚</label>　
+            <br><br>
+
+            <h3>1-4. あなたの最終学歴をお答えください。</h3>
+                <input type="radio" id="survey04_01" name="educational_years" required value="junior_high_school">
+                  <label for="survey04_01">中学</label>　
+                <input type="radio" id="survey04_02" name="educational_years" required value="high_school">
+                  <label for="survey04_02">高校</label>　
+                <input type="radio" id="survey04_03" name="educational_years" required value="junior_college">
+                  <label for="survey04_03">短大・高専</label>　
+                <input type="radio" id="survey04_04" name="educational_years" required value="university">
+                  <label for="survey04_04">大学</label>　
+                <input type="radio" id="survey04_05" name="educational_years" required value="graduate_school">
+                  <label for="survey04_05">大学院</label>　
+            <br><br>
+            </div>
+        `,
+        required: true,
+        button_label: '次へすすむ',
+    };  
+    
+
+
+    // basic_sheet02
+        const basic_sheet02 = {
+          type: jsPsychSurveyHtmlForm,
+          preamble: `
+              <div class="instruction">
+                  <h2>2. ふだんの介護状況についてお聞きします。</h2>
+              </div>
+              `,
+          html: `
+              <div class="instruction">
+              <h3>2-1. ふだん65歳以上の家族を介護していますか？</h3>
+                  <input type="radio" id="survey05_01" name="care_over65" required value="care_over65_inhome">
+                    <label for="survey05_01">自宅で介護している</label>　
+                  <input type="radio" id="survey05_02" name="care_over65" required value="care_over65_outhome">
+                    <label for="survey05_02">自宅外で介護している</label>　
+                  <input type="radio" id="survey05_03" name="care_over65" required value="care_over65_no">
+                    <label for="survey05_03">介護していない</label>　
+              <br><br>
+  
+              <h3>2-2. ふだんその他の家族を介護していますか？</h3>
+                  <input type="radio" id="survey06_01" name="care_other" required value="care_other_inhome">
+                    <label for="survey06_01">自宅で介護している</label>　
+                  <input type="radio" id="survey06_02" name="care_other" required value="care_other_outhome">
+                    <label for="survey06_02">自宅外で介護している</label>　
+                  <input type="radio" id="survey06_03" name="care_other" required value="care_other_no">
+                    <label for="survey06_03">介護していない</label>　
+              <br><br>
+              </div>
+          `,
+          required: true,
+          button_label: '次へすすむ',
+      };
+
+
+    // basic_sheet03
+        const basic_sheet03 = {
+          type: jsPsychSurveyHtmlForm,
+          preamble: `
+              <div class="instruction">
+                  <h2>3. 仕事、通学、家事などの生活の主要な活動状況についてお聞きします。</h2>
+                  <div class="box2">
+                    <p>「仕事」とは、収入を伴う仕事をいい、自家営業の手伝い、内職やアルバイトも含めます。「通学」には、予備校、専修学校などの各種学校などに通っている場合も含めます。<br>
+                    育児や介護のために仕事を一時的に休んでいる場合は「仕事をしている」とします。
+                    </p>
+                  </div>
+              </div>
+              `,
+          html: `
+              <div class="instruction">
+              <h3>3-1. 仕事、家事、通学などの状況についてお答えください。</h3>
+                  【仕事をしている】<br>
+                  <input type="radio" id="survey01_01" name="status" required value="work">
+                    <label for="survey01_01">主に仕事をしている</label>　<br>
+                  <input type="radio" id="survey01_02" name="status" required value="work_with_housework">
+                    <label for="survey01_02">家事などのかたわらに仕事をしている</label>　<br>
+                  <input type="radio" id="survey01_03" name="status" required value="work_with_school">
+                    <label for="survey01_03">通学などのかたわらに仕事をしている</label>　<br>
+                  <br>
+                  【仕事をしていない】<br>
+                  <input type="radio" id="survey01_04" name="status" required value="housework">
+                    <label for="survey01_04">仕事をしておらず、家事をしている</label>　<br>
+                  <input type="radio" id="survey01_05" name="status" required value="school">
+                    <label for="survey01_05">仕事をしておらず、通学している</label>　<br>
+                  <input type="radio" id="survey01_06" name="status" required value="other_activities">
+                    <label for="survey01_06">仕事をしておらず、家事や通学以外の活動を主にしている</label>　
+              <br><br>
+              </div>
+          `,
+          required: true,
+          button_label: '次へすすむ',
+      };
+
+
+        // basic_sheet04        
+        const basic_sheet04 = {
+          timeline: [{
+            type: jsPsychSurveyHtmlForm,
+            preamble: `
+              <div class="instruction">
+                  <h2>仕事をしている方にお聞きします。</h2>
+              </div>
+            `,
+            html: `
+              <div class="instruction">
+                <h2>3-2. ふだんの勤務状況についてお答えください。</h2>
+
+                <div class="box2">
+                    <p>「フルタイム」とは、1週間のあらかじめ決められた労働時間が40時間程度の勤務（1日8時間で週5日など）をいいます。<br>
+                    「短時間勤務」とは、フルタイムの人に比べ、1週間のあらかじめ決められた労働時間が短い勤務（1日6時間で週3日など）をいいます。<br>
+                    </p>
+                </div>
+
+                【フルタイム】<br>
+                  <input type="radio" id="survey01_01" name="working_hours" required value="fulltime_fixed">
+                    <label for="survey01_01">フルタイム・始業時間が固定されている</label>　<br>
+                  <input type="radio" id="survey01_02" name="working_hours" required value="hulltime_with_housework">
+                    <label for="survey01_02">フルタイム・始業時間を自由に選択できる</label>　<br>
+                  <input type="radio" id="survey01_03" name="working_hours" required value="hulltime_with_school">
+                    <label for="survey01_03">フルタイム・始業時間が会社都合で変わることがある</label>　<br>
+                  <br>
+                【短時間勤務】<br>
+                  <input type="radio" id="survey01_04" name="working_hours" required value="short_time">
+                    <label for="survey01_04">短時間勤務</label>　<br>
+                  <br>
+                  
+                <h2>3-3. ふだんの1週間の就業時間をお答えください（残業なども含めます）。</h2>
+                  1週間の合計就業時間：
+                    <select name="work_hour" required style="border: 2px solid #ff6f33;">
+                      <option value="" disabled selected>選択してください</option>
+                      <option value="under15hour">15時間未満</option>
+                      <option value="15_29hour">15～29時間</option>
+                      <option value="30_34hour">30～34時間</option>
+                      <option value="35_39hour">35～39時間</option>
+                      <option value="40_48hour">40～48時間</option>
+                      <option value="49_59hour">49～59時間</option>
+                      <option value="over60hour">60時間以上</option>
+                      <option value="unknown">決まっていない</option>
+                    </select>
+                <br><br>
+              </div>
+            `,
+            required: true,
+            button_label: '次へすすむ',
+          }],
+          conditional_function: function(){
+            // Get the response from the 'status' question in `basic_sheet02`
+            var last_response = jsPsych.data.get().last(1).values()[0].response.status;
+            // Check if the selected value matches the work-related options
+            if(last_response === 'work' || last_response === 'work_with_housework' || last_response === 'work_with_school'){
+              return true; // Show the additional question
+            } else {
+              return false; // Skip the additional question
+            }
+          }
+        };
+
+
+
+
+    // basic_sheet05
+        const basic_sheet05 = {
+          timeline: [{
+            type: jsPsychSurveyHtmlForm,　
+            preamble: `
+              <div class="instruction">
+                  <h2>4. 仕事の希望についてお聞きします。</h2>
+              </div>
+            `,
+            html: `
+              <div class="instruction">
+                <h2>4-1. 仕事に関する希望についてお答えください。</h2>
+                【フルタイム】<br>
+                  <input type="radio" id="survey01_01" name="work_need" required value="want_to_work">
+                    <label for="survey01_01">仕事をしたい（し続けたい）</label>　
+                  <input type="radio" id="survey01_02" name="work_need" required value="do_not_want_to_work">
+                    <label for="survey01_02">仕事をしたいと思わない</label>　<br>
+                  <br>
+                <h2>4-2. <u><b>希望する</b></u>1週間の就業時間についてお答えください。</h2>
+                  希望する1週間の合計就業時間：
+                    <select name="work_hour_need" required style="border: 2px solid #ff6f33;">
+                      <option value="" disabled selected>選択してください</option>
+                      <option value="no_need">働きたい希望はない</option>
+                      <option value="under15hour">15時間未満</option>
+                      <option value="15_29hour">15～29時間</option>
+                      <option value="30_34hour">30～34時間</option>
+                      <option value="35_39hour">35～39時間</option>
+                      <option value="40_48hour">40～48時間</option>
+                      <option value="49_59hour">49～59時間</option>
+                      <option value="over60hour">60時間以上</option>
+                      <option value="unknown">決まっていない</option>
+                    </select>
+                <br><br>
+              </div>
+            `,
+            required: true,
+            button_label: '次へすすむ',
+          }],
+        };
+
+
+// ras //
+         const ras = {
+            type: jsPsychSurveyLikert,
+            preamble: `
+              <div class="instruction">
+                <h1>Recovery Assessment Scale（RAS）</h1>
+                <h2>次の文章は、自分自身や自分の人生について、どのように感じていらっしゃるかを表したものです。</h2>
+                    それぞれの文章を読み、もっともあてはまると思うものを選択してください。</p>
+              </div>
+            `,
+            questions: [
+            '生きがいがある',
+            '不安があっても、自分のしたい生き方ができる',
+            '自分の人生で起きることは、自分で何とかできる',
+            '自分のことが好きだ',
+            '人々が自分のことをよく知ったら、好ましく思ってくれるだろう',
+            '自分がどんな人間になりたいかという考えがある',
+            '自分の将来に希望を持っている',
+            'いつも好奇心がある',
+            'ストレスに対処することができる',
+            '成功したいという強い願望がある',
+            '元気でいたり、元気になったりするための、自分なりの計画がある',
+            '到達したい人生の目標がある',
+            '現在の自分の目標を達成できると信じている',
+            '手助けを求めた方がよいのがどのような時か、知っている',
+            '手助けを求めてもかまわないと思う',
+            '必要な時には、手助けを求める',
+            'たとえ自分で自分のことを気にかけていなくても、他の人は私を気にかけてくれる',
+            '何か良いことが、いつかは起きるだろう',
+            '頼りにできる人がいる',
+            'たとえ自分のことを信じていない時でも、他の人が信じてくれる',
+            'さまざまな友達を持つことは、大切なことだ',
+            '精神の病気に対処することは、いまでは私の暮らしで最重要なことではない',
+            '症状が私の生活の妨（さまた）げとなることは、だんだん少なくなっている',
+            '私の症状が問題となる時間の長さは、毎回短くなっているようだ',
+
+          ].map((prompt, index) => ({
+            prompt: `<div class="instruction"><strong>${index + 1}. ${prompt}</strong></div>`, // インデックス +1 をつけて ) を追加
+            name: `ras${String(index + 1).padStart(2, '0')}`,
+            labels: ['まったく<br>そう思わない', 'そう思わない', 'どちらとも<br>いえない', 'そう思う', 'とても<br>そう思う'],
+            required: true
+          })),
+            
+            button_label: '次へすすむ',
+            on_finish: function(data) {
+                const newData = {};
+                Object.keys(data.response).forEach((key, idx) => {
+                  const value = data.response[key];
+                  // 特定のインデックスの場合は逆順に変換
+                  if (value !== null && value !== "") {
+                    // 1からの値に再設定
+                    newData[key] = value + 1;
+                  } else {
+                    newData[key] = ""; // 未回答の項目はそのまま
+                  }
+                });
+                data.response = newData; // 変換後のデータを保存
+              }
+            };
+
+// ras end//
+
+
+// ucla_ls //
+const ucla_ls = {
+    type: jsPsychSurveyLikert,
+    preamble: `
+      <div class="instruction">
+        <h1>日本語版UCLA 孤独感尺度</h2>
+        <h2>それぞれの項目について、あなたはどのくらいの頻度で感じているかお答えください。</h2>
+          あてはまるものを選択してください。</p>
+      </div>
+    `,
+    questions: [
+    '自分は周りの人たちの中になじんでいると感じますか', 
+    '自分には人との付き合いがないと感じることがありますか',
+    '自分には頼れる人が誰もいないと感じることがありますか', 
+    '自分はひとりぼっちだと感じることがありますか',
+    '自分は友人や仲間のグループの一員だと感じることがありますか', 
+    '自分は周りの人たちと共通点が多いと感じることがありますか',
+    '自分は誰とも親しくしていないと感じることはありますか', 
+    '自分の関心や考えは周りの人たちにはわからないと感じることがありますか',
+    '自分を社交的で親しみやすいと感じますか', 
+    '自分には親しい人たちがいると感じますか',
+    '自分は取り残されていると感じることがありますか', 
+    '他人との関わりは意味がないと感じることがありますか',
+    '自分のことを本当によく知っている人は誰もいないと感じることはありますか', 
+    '自分は他の人たちから孤立していると感じることはありますか',
+    '希望すれば自分と気の合う仲間は見つかると感じますか', 
+    '自分を本当に理解している人がいると感じますか',
+    '自分は内気であると感じますか', 
+    '周りの人たちと一体感がもてないと感じることがありますか',
+    '話し相手がいると感じますか', 
+    '頼れる人がいると感じますか'
+  ].map((prompt, index) => ({
+    prompt: `<div class="instruction"><strong>${index + 1}) ${prompt}</strong></div>`, // インデックス +1 をつけて ) を追加
+    name: `ucla_ls${String(index + 1).padStart(2, '0')}`,
+    labels: ['決してない', 'ほとんどない', '時々ある', '常にある'],
+    required: true
+  })),
+    
+    button_label: '次へすすむ',
+    on_finish: function(data) {
+      const newData = {};
+      Object.keys(data.response).forEach((key, idx) => {
+        const value = data.response[key];
+        // 特定のインデックスの場合は逆順に変換
+        if (value !== null && value !== "") {
+          // reverseを定義
+          if ([1, 5, 6, 9, 10, 15, 16, 19, 20].includes(idx + 1)) {
+            // 逆順である場合 4, 3, 2, 1 を出力
+            newData[key] = 4 - value;
+          } else {
+            // 通常の順序で 1, 2, 3, 4 を出力
+            newData[key] = value + 1;
+          }
+        } else {
+          newData[key] = ""; // 未回答の項目はそのまま
+        }
+      });
+      data.response = newData; // 変換後のデータを保存
+    }
+  };
+
+// ucla_ls end//
+
+    //sheetをまとめる
+    var basic = {
+        timeline: [basic_sheet01, basic_sheet02, basic_sheet03, basic_sheet04, basic_sheet05]
+    };
+
+// basic end//
+
+    // Start the experiment
+    jsPsych.run([
+    survey_id, 
+    basic,
+    ucla_ls,
+    ras
+                 ]);
+
+
+    </script>
+</html>
+
+
