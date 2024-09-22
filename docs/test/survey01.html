@@ -43,7 +43,7 @@
 
           // ダウンロードボタンを作成
           var downloadButton = document.createElement("button");
-          downloadButton.innerHTML = "回答ありがとうございました<br>このボタンを押してください";
+          downloadButton.innerHTML = "回答ありがとうございました<br>このボタンを押した後<br>「ダウンロード」ボタンを押してください";
 
           // ボタンのスタイルを設定
           downloadButton.style.position = "absolute";
@@ -78,7 +78,7 @@
         html: `
         <div class="instruction">
         <h2>識別用コードを入力してください。</h2>
-            あなたに割り当てられたID：<input name="participant_id" type="text" pattern="^[0-9]+$" style="width: 120px;" required>
+            <input name="participant_id" type="text" inputmode="numeric" palceholder="半角数字で入力してください" pattern="^[0-9]+$" required>
             <br>※半角数字で入力してください。
         </div>
         `,
