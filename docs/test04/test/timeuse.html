@@ -18,7 +18,7 @@
     <style>
       /* カードコンテナのスタイル */
       body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #FF6B6B 0%, #FFA94D 100%);
         min-height: 100vh;
         padding: 20px;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -46,7 +46,7 @@
       }
 
       h1 {
-        color: #667eea;
+        color: #FF6B6B;
         font-size: 2em;
         margin-bottom: 20px;
         text-align: center;
@@ -54,7 +54,7 @@
       }
 
       h2 {
-        color: #764ba2;
+        color: #FF8C42;
         font-size: 1.5em;
         margin-top: 25px;
         margin-bottom: 15px;
@@ -67,7 +67,7 @@
         margin-top: 20px;
         margin-bottom: 10px;
         padding-left: 10px;
-        border-left: 4px solid #667eea;
+        border-left: 4px solid #FF6B6B;
       }
 
       /* セクションカード */
@@ -81,7 +81,7 @@
       }
 
       .question-card:hover {
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
         transform: translateY(-2px);
       }
 
@@ -103,8 +103,8 @@
       input[type="date"]:focus,
       select:focus {
         outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: #FF6B6B;
+        box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
       }
 
       /* Remove inline style overrides - handled by default styling */
@@ -141,7 +141,7 @@
 
       /* ボタンのスタイル */
       .jspsych-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #FF6B6B 0%, #FFA94D 100%);
         color: white;
         border: none;
         padding: 15px 40px;
@@ -149,13 +149,13 @@
         border-radius: 25px;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
         font-weight: 600;
       }
 
       .jspsych-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
       }
 
       /* 活動カテゴリーの背景色 */
@@ -457,7 +457,7 @@
         <form>
           <div class="instruction">
             <h1>生活時間調査</h1>
-            <h2 style="text-align: center; color: #667eea;"><u>${time_slots[currentTrialIndex].text}</u>の状況をお聞きします。</h2>
+            <h2 style="text-align: center; color: #FF6B6B;"><u>${time_slots[currentTrialIndex].text}</u>の状況をお聞きします。</h2>
             
             <div class="question-card">
               <h3>1. 何をしていましたか？</h3>              
