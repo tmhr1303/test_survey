@@ -107,11 +107,7 @@
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
       }
 
-      input[type="text"][style*="border: 2px solid #ff6f33"],
-      input[type="date"][style*="border: 2px solid #ff6f33"],
-      select[style*="border: 2px solid #ff6f33"] {
-        border-color: #667eea !important;
-      }
+      /* Remove inline style overrides - handled by default styling */
 
       /* チェックボックスのスタイル */
       input[type="checkbox"] {
@@ -119,6 +115,20 @@
         width: 18px;
         height: 18px;
         cursor: pointer;
+      }
+
+      /* チェックボックスラベルカード */
+      .checkbox-label-card {
+        padding: 10px;
+        background: white;
+        border-radius: 8px;
+        transition: all 0.2s;
+        display: block;
+        margin: 5px 0;
+      }
+
+      .checkbox-label-card:hover {
+        background: #f8f9fa;
       }
 
       label {
@@ -316,35 +326,35 @@
           <div class="question-card">
             <h3>その日の主要な予定や出来事について当てはまるものをすべて選択してください。</h3>
             <div style="display: grid; grid-template-columns: 1fr; gap: 10px; padding: 10px;">
-              <label style="padding: 10px; background: white; border-radius: 8px; transition: all 0.2s;">
+              <label class="checkbox-label-card">
                 <input type="checkbox" id="travel" name="events" />
                 旅行・行楽
               </label>
-              <label style="padding: 10px; background: white; border-radius: 8px; transition: all 0.2s;">
+              <label class="checkbox-label-card">
                 <input type="checkbox" id="ceremony" name="events" />
                 行事または冠婚葬祭（半日以上の参加）
               </label>
-              <label style="padding: 10px; background: white; border-radius: 8px; transition: all 0.2s;">
+              <label class="checkbox-label-card">
                 <input type="checkbox" id="business_trip" name="events" />
                 出張・研修など
               </label>
-              <label style="padding: 10px; background: white; border-radius: 8px; transition: all 0.2s;">
+              <label class="checkbox-label-card">
                 <input type="checkbox" id="telework" name="events" />
                 テレワーク
               </label>
-              <label style="padding: 10px; background: white; border-radius: 8px; transition: all 0.2s;">
+              <label class="checkbox-label-card">
                 <input type="checkbox" id="medical_leave" name="events" />
                 療養
               </label>
-              <label style="padding: 10px; background: white; border-radius: 8px; transition: all 0.2s;">
+              <label class="checkbox-label-card">
                 <input type="checkbox" id="day_off" name="events" />
                 休みの日（休暇・休日など）
               </label>
-              <label style="padding: 10px; background: white; border-radius: 8px; transition: all 0.2s;">
+              <label class="checkbox-label-card">
                 <input type="checkbox" id="childcare_leave" name="events" />
                 育児休業・育児休暇
               </label>
-              <label style="padding: 10px; background: white; border-radius: 8px; transition: all 0.2s;">
+              <label class="checkbox-label-card">
                 <input type="checkbox" id="caregiver_leave" name="events" />
                 介護休業・介護休暇
               </label>
