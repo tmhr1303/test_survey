@@ -283,7 +283,7 @@
               あなたに割り当てられたID：
             </label>
             <input name="participant_id" type="text" inputmode="numeric" pattern="^[0-9]+$" required 
-              placeholder="入力してください" style="border: 2px solid #ff6f33; font-size: 1.2em;">
+              placeholder="入力してください" style="border: 2px solid #FF6B6B; font-size: 1.2em;">
             <p style="color: #666; margin-top: 10px; font-size: 0.9em;">※半角数字で入力してください。</p>
           </div>
         </div>
@@ -309,13 +309,13 @@
             <h3>日付を選択してください。</h3>
             <label for="survey_day">回答する日付：</label>
             <input type="date" id="survey_day" name="date" min="2024-09-01" required 
-            value="${new Date().toISOString().split('T')[0]}" style="border: 2px solid #ff6f33; font-size: 1.2em;">
+            value="${new Date().toISOString().split('T')[0]}" style="border: 2px solid #FF6B6B; font-size: 1.2em;">
           </div>
 
           <div class="question-card">
             <h3>その日の天気について選択してください。</h3>
             <label for="weather">天気：</label>
-            <select name="weather" id="weather" required style="border: 2px solid #ff6f33;">
+            <select name="weather" id="weather" required style="border: 2px solid #FF6B6B;">
               <option value="" disabled selected>選択してください</option>
               <option value="without_rain">降雨なし（晴れあるいはくもり）</option>
               <option value="sometime_rain">一時雨</option>
@@ -462,7 +462,7 @@
             <div class="question-card">
               <h3>1. 何をしていましたか？</h3>              
               <label for="bhvr">その時にしていた活動を選択してください:</label>
-              <select name="bhvr" id="bhvr" required style="border: 2px solid #ff6f33;">
+              <select name="bhvr" id="bhvr" required style="border: 2px solid #FF6B6B;">
                 ${option_behaviors()}
               </select>
               <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
@@ -478,7 +478,7 @@
             <div class="question-card">
               <h3>2. その活動や行動はいつまで続けましたか？</h3>
               <label for="time">終了時刻:</label>
-              <select name="time" id="time" required style="border: 2px solid #ff6f33;">
+              <select name="time" id="time" required style="border: 2px solid #FF6B6B;">
                 ${option_time(currentTrialIndex)}
               </select>
             </div>
@@ -486,7 +486,7 @@
             <div class="question-card">
               <h3>3. その時間帯に誰かと一緒にいましたか？</h3>
               <label for="people">誰と:</label>
-              <select name="people" id="people" required style="border: 2px solid #ff6f33;">
+              <select name="people" id="people" required style="border: 2px solid #FF6B6B;">
                 ${option_people()}
               </select>
             </div>
